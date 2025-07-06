@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { defineTool } from './tool.js';
 import * as javascript from '../javascript.js';
 import { generateLocator } from './utils.js';
+import fs from 'node:fs';
 
 const snapshot = defineTool({
   capability: 'core',
@@ -36,6 +37,31 @@ const snapshot = defineTool({
     return {
       code: [`// <internal code to capture accessibility snapshot>`],
       captureSnapshot: true,
+      waitForNetwork: false,
+    };
+  },
+});
+
+const saveSnapshot = defineTool({
+  capability: 'core',
+  schema: {
+    name: 'browser_save_snapshot',
+    title: 'Save page snapshot',
+    description: 'Capture accessibility snapshot of the current page and save it to a file',
+    inputSchema: z.object({
+      filename: z.string().describe('The name of the file to save the snapshot to.'),
+    }),
+    type: 'readOnly',
+  },
+
+  handle: async (context, { filename }) => {
+    const tab = await context.ensureTab();
+    await tab.captureSnapshot();
+    const snapshot = tab.snapshotOrDie();
+    await fs.promises.writeFile(filename, snapshot.text());
+    return {
+      code: [`// <internal code to save accessibility snapshot to ${filename}>`],
+      captureSnapshot: false,
       waitForNetwork: false,
     };
   },
@@ -209,7 +235,7 @@ const selectOption = defineTool({
 
     return {
       code,
-      action: () => locator.selectOption(params.values).then(() => {}),
+      action: () => locator.selectOption(params.values).then(() => { }),
       captureSnapshot: true,
       waitForNetwork: true,
     };
@@ -218,6 +244,7 @@ const selectOption = defineTool({
 
 export default [
   snapshot,
+  saveSnapshot,
   click,
   drag,
   hover,
