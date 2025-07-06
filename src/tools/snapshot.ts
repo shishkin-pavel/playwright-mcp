@@ -20,6 +20,7 @@ import { defineTool } from './tool.js';
 import * as javascript from '../javascript.js';
 import { generateLocator } from './utils.js';
 import fs from 'node:fs';
+import { outputFile } from '../config.js';
 
 const snapshot = defineTool({
   capability: 'core',
@@ -58,9 +59,10 @@ const saveSnapshot = defineTool({
     const tab = await context.ensureTab();
     await tab.captureSnapshot();
     const snapshot = tab.snapshotOrDie();
-    await fs.promises.writeFile(filename, snapshot.text());
+    const filePath = await outputFile(context.config, filename ?? `snapshot-${new Date().toISOString()}.md`);
+    await fs.promises.writeFile(filePath, snapshot.text());
     return {
-      code: [`// <internal code to save accessibility snapshot to ${filename}>`],
+      code: [`// <internal code to save accessibility snapshot to ${filePath}>`],
       captureSnapshot: false,
       waitForNetwork: false,
     };
