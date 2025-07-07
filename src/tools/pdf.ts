@@ -40,13 +40,13 @@ const pdf = defineTool({
     const fileName = await outputFile(context.config, params.filename ?? `page-${new Date().toISOString()}.pdf`);
 
     const code = [
-      `// Save page as ${fileName}`,
+      `// Save page as <DOWNLOADS_PATH>/${params.filename}`,
       `await page.pdf(${javascript.formatObject({ path: fileName })});`,
     ];
 
     return {
       code,
-      action: async () => tab.page.pdf({ path: fileName }).then(() => {}),
+      action: async () => tab.page.pdf({ path: fileName }).then(() => { }),
       captureSnapshot: false,
       waitForNetwork: false,
     };
