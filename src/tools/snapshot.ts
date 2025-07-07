@@ -61,9 +61,8 @@ const saveSnapshot = defineTool({
     const snapshot = tab.snapshotOrDie();
     const filePath = await outputFile(context.config, filename ?? `snapshot-${new Date().toISOString()}.md`);
     await fs.promises.writeFile(filePath, snapshot.text());
-    const loggedPath = process.env.PLAYWRIGHT_DOWNLOADS_PATH ? `${process.env.PLAYWRIGHT_DOWNLOADS_PATH}/${filename}` : filePath;
     return {
-      code: [`// <internal code to save accessibility snapshot to ${loggedPath}>`],
+      code: [`// <internal code to save accessibility snapshot to <DOWNLOADS_PATH>/${filename}>`],
       captureSnapshot: true,
       waitForNetwork: false,
     };
