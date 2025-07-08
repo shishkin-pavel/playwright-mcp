@@ -63,7 +63,7 @@ const saveSnapshot = defineTool({
     await fs.promises.writeFile(filePath, snapshot.text());
     return {
       code: [`// <internal code to save accessibility snapshot to <DOWNLOADS_PATH>/${filename}>`],
-      captureSnapshot: true,
+      captureSnapshot: false,
       waitForNetwork: false,
     };
   },
