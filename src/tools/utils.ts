@@ -21,7 +21,7 @@ import type { Tab } from '../tab.js';
 export async function waitForCompletion<R>(context: Context, tab: Tab, callback: () => Promise<R>): Promise<R> {
   const requests = new Set<playwright.Request>();
   let frameNavigated = false;
-  let waitCallback: () => void = () => {};
+  let waitCallback: () => void = () => { };
   const waitBarrier = new Promise<void>(f => { waitCallback = f; });
 
   const requestListener = (request: playwright.Request) => requests.add(request);
@@ -70,7 +70,7 @@ export async function waitForCompletion<R>(context: Context, tab: Tab, callback:
 }
 
 export function sanitizeForFilePath(s: string) {
-  const sanitize = (s: string) => s.replace(/[\x00-\x2C\x2E-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]+/g, '-');
+  const sanitize = (s: string) => s.replace(/[\x00-\x2C\x2E\x3A-\x40\x5B\x5D-\x60\x7B-\x7F]+/g, '-');
   const separator = s.lastIndexOf('.');
   if (separator === -1)
     return sanitize(s);
